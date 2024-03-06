@@ -70,14 +70,25 @@ Table Empleados {
   fecha_contratado date 
   fecha_facturacion date
   id_estado_empleado int
-  ultimo_cliente int 
-  cliente_actual int
+  ultimo_cliente id_cliente 
+  cliente_actual id_cliente
 }
 
 Table EstadoEmpleados {
   id_estado_empleado int [pk]
-  estado varchar [default: 123, note: "1 - Pipeline, 2 - Bench, 3 - Billing"]
+  estado varchar [note: "1 - Pipeline, 2 - Bench, 3 - Billing"]
   desc_estado_empleado varchar 
+}
+
+Table Cambios { //tabla que registra los cambios hechos por los demas roles
+  id_cambio int [pk]
+
+  id_rol int
+}
+
+Table Roles { // tabla que asigna el rol del usuario
+  id_rol int [pk]
+  permiso varchar [default: 1234, note: "1-Administrador, 2-Account Manager, 3-Resource Manager (Client&Proyects), 4-Resource Manager (Staffer)"]
 }
 
 Ref: Proyectos.id_cliente > Clientes.id_cliente
@@ -90,3 +101,4 @@ Ref: Vacantes.id_empleado - Empleados.id_empleado
 Ref: Empleados.id_estado_empleado > EstadoEmpleados.id_estado_empleado
 Ref: Empleados.ultimo_cliente - Clientes.id_cliente
 Ref: Empleados.cliente_actual - Clientes.id_cliente
+Ref: Cambios.id_rol - Roles.id_rol
