@@ -1,0 +1,104 @@
+ Table Clientes {
+  id_cliente int [pk]
+  pdf_contrato url
+  logo url
+  nombre_cliente varchar
+  desc_cliente varchar
+  exclusividad varchar
+  alto_crecimiento bool //nuevo
+  division varchar
+}
+
+Table Proyectos {
+  id_proyecto int [pk]
+  titulo_proyecto varchar
+  desc_proyecto varchar
+  tarifa float
+  fecha_publicacion date
+  fecha_vencimiento date
+  //region varchar
+  //comentarios varchar
+  id_cliente int
+  id_estado_proyecto int
+  id_posicion int
+}
+
+Table EstadoProyectos {
+  id_estado_proyecto int [pk]
+  cerrado bool
+  razon varchar
+}
+
+Table Posiciones {
+  id_posicion int [pk]
+  titulo_posicion varchar
+  desc_posicion varchar
+  cantidad_vacantes int //vacantes
+  tipo_publicacion varchar 
+  division_cruzada bool
+  //nuevo*
+  division varchar
+  region varchar
+  pila_tecnologica varchar
+  curacion_demanda varchar
+  exclusividad bool
+  id_vacante int
+  id_proyecto int
+}
+
+Table Vacantes { //nuevo
+  id_vacante int [pk]
+  estado_vacante varchar//o bool //representa lleno/nuevo contratacion
+  progreso varchar //razon
+  id_empleado int //candidato seleccionado
+  //la vacante se llena por un empleado
+  id_posicion int
+}
+
+Table Empleados { //nombre sujeto a cambio pues representa a EMPLEADOS Y CANDIDATOS
+  id_empleado int [pk] 
+  numero_SI int
+  region varchar
+  division varchar
+  titulo_trabajo varchar
+  grado_trabajo varchar
+  pila_tecnologica varchar
+  salario_esperado float
+  accion_propuesta varchar
+  fecha_registro date
+  telefono varchar
+  correo varchar
+  
+  //salario_bruto no veo necesario
+  costo_empleado int //esto ahora es su salario en vez de ser una sumatoria
+  id_estado_empleado int 
+
+  //variables
+  posicion varchar
+  dias_banca int
+  fecha_contratado date //asumo que este tambien se agrega separado de fecha de ingreso 
+  fecha_facturacion date
+  ultimo_cliente id_cliente 
+  cliente_actual id_cliente 
+}
+
+Table EstadoEmpleados {
+  id_estado_empleado int [pk]
+  estado varchar //dependiendo del estado (banca, pipeline, o facturacion) cambian los demas atributos
+  desc_estado_empleado varchar //revisar que es esto
+}
+
+Ref: Proyectos.id_cliente > Clientes.id_cliente
+Ref: Proyectos.id_estado_proyecto > EstadoProyectos.id_estado_proyecto
+Ref: Proyectos.id_posicion < Posiciones.id_posicion
+
+Ref: Posiciones.id_vacante < Vacantes.id_vacante
+Ref: Posiciones.id_proyecto > Proyectos.id_proyecto
+
+Ref: Vacantes.id_posicion > Posiciones.id_posicion
+Ref: Vacantes.id_empleado - Empleados.id_empleado
+
+Ref: Empleados.id_estado_empleado - EstadoEmpleados.id_estado_empleado
+
+Ref: Empleados.ultimo_cliente - Clientes.id_cliente
+Ref: Empleados.cliente_actual - Clientes.id_cliente
