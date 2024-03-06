@@ -1,0 +1,92 @@
+Table Clientes {
+  id_cliente int [pk]
+  pdf_contrato  url
+  logo url
+  nombre_cliente varchar
+  desc_cliente varchar
+  exclusividad varchar
+  alto_crecimiento bool 
+  division varchar
+}
+
+Table Proyectos {
+  id_proyecto int [pk]
+  titulo_proyecto varchar
+  desc_proyecto varchar
+  tarifa float
+  fecha_publicacion date
+  fecha_vencimiento date
+  id_cliente int
+  id_estado_proyecto int
+  id_posicion int
+}
+
+Table EstadoProyectos {
+  id_estado_proyecto int [pk]
+  estado varchar [default: 123, note: "1 - En Preparación, 2 - Activo, 3 - Cerrado"]
+  razon varchar
+}
+
+Table Posiciones {
+  id_posicion int [pk]
+  titulo_posicion varchar
+  desc_posicion varchar
+  cantidad_vacantes int 
+  tipo_publicacion varchar 
+  division_cruzada bool
+  division varchar
+  region varchar
+  pila_tecnologica varchar
+  curacion_demanda varchar
+  exclusividad bool
+  id_vacante int
+  id_proyecto int
+}
+
+Table Vacantes { //nuevo
+  id_vacante int [pk]
+  estado_vacante varchar//en las correcciones de figma prob se va a quitar
+  porcen_progreso varchar //razon
+  id_empleado int 
+  id_posicion int
+}
+
+Table Empleados { 
+  id_empleado int [pk]
+  numero_SI int
+  region varchar
+  division varchar
+  titulo_trabajo varchar
+  grado_trabajo varchar
+  pila_tecnologica varchar
+  salario_esperado float
+  accion_propuesta varchar
+  fecha_registro date
+  telefono varchar
+  correo varchar
+  costo_empleado int
+  posicion varchar
+  dias_banca int
+  fecha_contratado date 
+  fecha_facturacion date
+  id_estado_empleado int
+  ultimo_cliente int 
+  cliente_actual int
+}
+
+Table EstadoEmpleados {
+  id_estado_empleado int [pk]
+  estado varchar [default: 123, note: "1 - Pipeline, 2 - Bench, 3 - Billing"]
+  desc_estado_empleado varchar 
+}
+
+Ref: Proyectos.id_cliente > Clientes.id_cliente
+Ref: Proyectos.id_estado_proyecto > EstadoProyectos.id_estado_proyecto
+Ref: Proyectos.id_posicion < Posiciones.id_posicion
+Ref: Posiciones.id_vacante < Vacantes.id_vacante
+Ref: Posiciones.id_proyecto > Proyectos.id_proyecto
+Ref: Vacantes.id_posicion > Posiciones.id_posicion
+Ref: Vacantes.id_empleado - Empleados.id_empleado
+Ref: Empleados.id_estado_empleado > EstadoEmpleados.id_estado_empleado
+Ref: Empleados.ultimo_cliente - Clientes.id_cliente
+Ref: Empleados.cliente_actual - Clientes.id_cliente
