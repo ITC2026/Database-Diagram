@@ -1,4 +1,4 @@
- Table Clientes {
+Table Clientes {
   id_cliente int [pk]
   pdf_contrato url
   logo url
@@ -88,6 +88,23 @@ Table EstadoEmpleados {
   desc_estado_empleado varchar //revisar que es esto
 }
 
+Table Usuarios {
+  id_usuario int [pk]
+  nombre_usuario varchar
+  password varhcar
+  correo varchar
+  rol varchar
+}
+
+Table HistorialUsuarios {
+  id_log int [pk]
+  method varchar
+  fecha_log timestamp
+  id_entidad int
+  tipo_entindad varchar
+  id_usuario int
+}
+
 Ref: Proyectos.id_cliente > Clientes.id_cliente
 Ref: Proyectos.id_estado_proyecto > EstadoProyectos.id_estado_proyecto
 Ref: Proyectos.id_posicion < Posiciones.id_posicion
@@ -102,3 +119,5 @@ Ref: Empleados.id_estado_empleado - EstadoEmpleados.id_estado_empleado
 
 Ref: Empleados.ultimo_cliente - Clientes.id_cliente
 Ref: Empleados.cliente_actual - Clientes.id_cliente
+
+Ref: HistorialUsuarios.id_usuario > Usuarios.id_usuario
