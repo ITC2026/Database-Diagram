@@ -1,11 +1,11 @@
 Table Clientes {
   id_cliente int [pk]
-  pdf_contrato url
+  pdf_contrato  url
   logo url
   nombre_cliente varchar
   desc_cliente varchar
   exclusividad varchar
-  alto_crecimiento bool //nuevo
+  alto_crecimiento bool 
   division varchar
 }
 
@@ -16,8 +16,6 @@ Table Proyectos {
   tarifa float
   fecha_publicacion date
   fecha_vencimiento date
-  //region varchar
-  //comentarios varchar
   id_cliente int
   id_estado_proyecto int
   id_posicion int
@@ -25,7 +23,7 @@ Table Proyectos {
 
 Table EstadoProyectos {
   id_estado_proyecto int [pk]
-  cerrado bool
+  estado varchar [default: 123, note: "1 - En Preparación, 2 - Activo, 3 - Cerrado"]
   razon varchar
 }
 
@@ -33,10 +31,9 @@ Table Posiciones {
   id_posicion int [pk]
   titulo_posicion varchar
   desc_posicion varchar
-  cantidad_vacantes int //vacantes
+  cantidad_vacantes int 
   tipo_publicacion varchar 
   division_cruzada bool
-  //nuevo*
   division varchar
   region varchar
   pila_tecnologica varchar
@@ -48,15 +45,14 @@ Table Posiciones {
 
 Table Vacantes { //nuevo
   id_vacante int [pk]
-  estado_vacante varchar//o bool //representa lleno/nuevo contratacion
-  progreso varchar //razon
-  id_empleado int //candidato seleccionado
-  //la vacante se llena por un empleado
+  estado_vacante varchar//en las correcciones de figma prob se va a quitar
+  porcen_progreso varchar //razon
+  id_empleado int 
   id_posicion int
 }
 
-Table Empleados { //nombre sujeto a cambio pues representa a EMPLEADOS Y CANDIDATOS
-  id_empleado int [pk] 
+Table Empleados { 
+  id_empleado int [pk]
   numero_SI int
   region varchar
   division varchar
@@ -68,24 +64,20 @@ Table Empleados { //nombre sujeto a cambio pues representa a EMPLEADOS Y CANDIDA
   fecha_registro date
   telefono varchar
   correo varchar
-  
-  //salario_bruto no veo necesario
-  costo_empleado int //esto ahora es su salario en vez de ser una sumatoria
-  id_estado_empleado int 
-
-  //variables
+  costo_empleado int
   posicion varchar
   dias_banca int
-  fecha_contratado date //asumo que este tambien se agrega separado de fecha de ingreso 
+  fecha_contratado date 
   fecha_facturacion date
+  id_estado_empleado int
   ultimo_cliente id_cliente 
-  cliente_actual id_cliente 
+  cliente_actual id_cliente
 }
 
 Table EstadoEmpleados {
   id_estado_empleado int [pk]
-  estado varchar //dependiendo del estado (banca, pipeline, o facturacion) cambian los demas atributos
-  desc_estado_empleado varchar //revisar que es esto
+  estado varchar [note: "1 - Pipeline, 2 - Bench, 3 - Billing"]
+  desc_estado_empleado varchar 
 }
 
 Table Usuarios {
@@ -108,15 +100,11 @@ Table HistorialUsuarios {
 Ref: Proyectos.id_cliente > Clientes.id_cliente
 Ref: Proyectos.id_estado_proyecto > EstadoProyectos.id_estado_proyecto
 Ref: Proyectos.id_posicion < Posiciones.id_posicion
-
 Ref: Posiciones.id_vacante < Vacantes.id_vacante
 Ref: Posiciones.id_proyecto > Proyectos.id_proyecto
-
 Ref: Vacantes.id_posicion > Posiciones.id_posicion
 Ref: Vacantes.id_empleado - Empleados.id_empleado
-
-Ref: Empleados.id_estado_empleado - EstadoEmpleados.id_estado_empleado
-
+Ref: Empleados.id_estado_empleado > EstadoEmpleados.id_estado_empleado
 Ref: Empleados.ultimo_cliente - Clientes.id_cliente
 Ref: Empleados.cliente_actual - Clientes.id_cliente
 
