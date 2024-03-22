@@ -1,104 +1,109 @@
-Table Clientes {
-    id_cliente int [pk]
-    pdf_contrato varchar
+Table Clients {
+    client_id int [pk]
+    contract_pdf varchar
     logo varchar
-    nombre_cliente varchar
-    desc_cliente varchar
-    exclusividad varchar
-    alto_crecimiento bool
+    client_name varchar
+    client_desc varchar
+    exclusivity varchar
+    high_growth bool
     division varchar
 }
 
-Table Proyectos {
-    id_proyecto int [pk]
-    titulo_proyecto varchar
-    desc_proyecto varchar
-    tarifa float
-    fecha_publicacion date
-    fecha_vencimiento date
-    id_cliente int
-    estado_proyecto int
-    id_posicion int
+Table Projects {
+    project_id int [pk]
+    project_title varchar
+    project_desc varchar
+    bill_rate float
+    publication_date date
+    expiration_date date
+    project_status int
+    client_id int
 }
 
-Table Posiciones {
-    id_posicion int [pk]
-    titulo_posicion varchar
-    desc_posicion varchar
-    cantidad_vacantes int
-    tipo_publicacion varchar
-    division_cruzada bool
+Table Positions {
+    position_id int [pk]
+    position_title varchar
+    position_desc varchar
+    //vacancies_count int No longer needed, can be calc from the code
+    publication_type varchar
+    cross_division bool
     division varchar
     region varchar
-    pila_tecnologica varchar
-    curacion_demanda varchar
-    exclusividad bool
-    id_vacante int
-    id_proyecto int
+    tech_stack varchar
+    demand_curation varchar
+    exclusivity bool
+    project_id int
 }
 
-Table Vacantes {
-    id_vacante int [pk]
-    estado_vacante varchar
-    progreso varchar
-    id_empleado int
-    id_posicion int
+Table Vacancies {
+    vacancy_id int [pk]
+    vacancy_status varchar
+    reason varchar //reason for vacancy status
+    employee_id int
+    position_id int
 }
 
-Table Empleados {
-    id_empleado int [pk]
+Table Persons { //could be changed Insider
+    person_id int [pk]
     region varchar
     division varchar
-    titulo_trabajo varchar
-    grado_trabajo varchar
-    pila_tecnologica varchar
-    fecha_registro date
-    telefono varchar
-    correo varchar
+    job_title varchar
+    job_grade varchar
+    tech_stack varchar
+    registration_date date
+    phone varchar
+    email varchar
+    pipeline_id int
+    employee_id int 
 }
 
-Table Contratado {
-    salario float
-    fecha_contratado date
-    fecha_inicio_contrato date
-    ultimo_cliente varchar
-    cliente_actual varchar
-    horas_trabajo int
-    id_empleado int 
+Table Employees { //previously hired
+  employee_id int [pk]
+  salary float
+  hired_date date
+  contract_start_date date
+  last_client varchar
+  current_client varchar
+  work_hours int
+  bench_id int
+  billing_id int
 }
 
 Table Bench {
-    en_bench_desde date
-    dias_en_bench int
-    id_empleado int 
+  bench_id int [pk]
+  benched_since date
+  days_on_bench int
 }
 
 Table Pipeline {
-    salario_esperado float
-    en_pipeline_desde date
-    dias_en_pipeline int
-    id_empleado int 
+  pipeline_id int [pk]
+  expected_salary float
+  in_pipeline_since date
+  days_in_pipeline int
+  person_id int 
 }
 
 Table Billing {
-    facturando_desde date
-    dias_facturando int
-    id_empleado int 
+  billing_id int [pk]
+  billing_since date
+  days_billing int
 }
 
-Table Usuarios {
-    id_usuario int [pk]
-    nombre_usuario varchar
+Table Users {
+    user_id int [pk]
+    username varchar
     password varchar
-    correo varchar
-    rol varchar
+    email varchar
+    role varchar
 }
 
-Ref: "Proyectos"."id_cliente" > "Clientes"."id_cliente"
-Ref: "Posiciones"."id_proyecto" > "Proyectos"."id_proyecto"
-Ref: "Vacantes"."id_posicion" > "Posiciones"."id_posicion"
-Ref: "Vacantes"."id_empleado" - "Empleados"."id_empleado"
-Ref: "Contratado"."id_empleado" < "Empleados"."id_empleado"
-Ref: "Bench"."id_empleado" < "Empleados"."id_empleado"
-Ref: "Pipeline"."id_empleado" < "Empleados"."id_empleado"
-Ref: "Billing"."id_empleado" < "Empleados"."id_empleado"
+Ref: "Projects"."client_id" > "Clients"."client_id"
+Ref: "Positions"."project_id" > "Projects"."project_id"
+Ref: "Vacancies"."position_id" > "Positions"."position_id"
+Ref: "Vacancies"."employee_id" - "Employees"."employee_id"
+Ref: "Persons"."person_id" - "Pipeline"."person_id"
+Ref: "Persons"."person_id" - "Employees"."employee_id"
+Ref: "Employees"."bench_id" - "Bench"."bench_id"
+Ref: "Employees"."billing_id" - "Billing"."billing_id"
+
+

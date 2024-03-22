@@ -1,149 +1,152 @@
  classDiagram 
-    class Clientes {
-        + id_cliente: int
-        - pdf_contrato: url
-        - logo: url
-        - nombre_cliente: varchar
-        - desc_cliente: varchar
-        + exclusividad: varchar
-        + alto_crecimiento: bool
-        + division: varchar
+    class Clients {
+    + client_id: int
+    - contract_pdf: url
+    - logo: url
+    - client_name: varchar
+    - client_desc: varchar
+    + exclusivity: varchar
+    + high_growth: bool
+    + division: varchar
 
-        -visualizarClientes()
-        -verInfoClientes()
-        -listarClientes()
-        -agregarClientes()
-        -modificarClientes()
-        -eliminarClientes()
-    }
+    -viewClients()
+    -viewClientInfo()
+    -listClients()
+    -addClients()
+    -modifyClients()
+    -deleteClients()
+}
 
-    class Proyectos {
-        + id_proyecto: int
-        + titulo_proyecto: varchar
-        - desc_proyecto: varchar
-        - tarifa: float
-        - fecha_publicacion: date
-        + fecha_vencimiento: date
-        + id_cliente: int
-        - estado_proyecto: int
-        + id_posicion: int
+class Projects {
+    + project_id: int
+    + project_title: varchar
+    - project_desc: varchar
+    - rate: float
+    - publication_date: date
+    + expiration_date: date
+    + client_id: int
+    - project_status: int
 
-        -visualizarProyectos()
-        -verInfoProyectos()
-        -listarProyectos()
-        -agregarProyectos()
-        -modificarProyectos()
-        -cerrarProyectos()
-    }
 
-    class Posiciones {
-        + id_posicion: int
-        + titulo_posicion: varchar
-        - desc_posicion: varchar
-        - cantidad_vacantes: int
-        + tipo_publicacion: varchar
-        + division_cruzada: bool
-        + division: varchar
-        + region: varchar
-        + pila_tecnologica: varchar
-        + curacion_demanda: varchar
-        + exclusividad: bool
-        + id_vacante: int
-        + id_proyecto: int
+    -viewProjects()
+    -viewProjectInfo()
+    -listProjects()
+    -addProjects()
+    -modifyProjects()
+    -closeProjects()
+}
 
-        -visualizarPosiciones()
-        -verInfoPosiciones()
-        -listarPosiciones()
-        -agregarPosiciones()
-        -modificarPosiciones()
-        -eliminarPosiciones()
-    }
+class Positions {
+    + position_id: int
+    + position_title: varchar
+    - position_desc: varchar
+    + publication_type: varchar
+    + cross_division: bool
+    + division: varchar
+    + region: varchar
+    + tech_stack: varchar
+    + demand_curation: varchar
+    + exclusivity: bool
+    + project_id: int
 
-    class Vacantes {
-        + id_vacante: int
-        - estado_vacante: varchar
-        - progreso: varchar
-        - id_empleado: int
-        - id_posicion: int
+    -viewPositions()
+    -viewPositionInfo()
+    -listPositions()
+    -addPositions()
+    -modifyPositions()
+    -deletePositions()
+}
 
-        -listarVacantes()
-        -agregarVacantes()
-        -cerrarVacantes()
-        -visualizarPostulados()
-    }
+class Vacancies {
+    + vacancy_id: int
+    - vacancy_status: varchar
+    - progress: varchar
+    - employee_id: int
+    - position_id: int
 
-    class Empleados {
-        + id_empleado: int
-        + region: varchar
-        + division: varchar
-        + titulo_trabajo: varchar
-        + grado_trabajo: varchar
-        + pila_tecnologica: varchar
-        - fecha_registro: date
-        - telefono: varchar
-        - correo: varchar
-        
-        -visualizarEmpleados()
-        -listarEmpleados()
-        -verInfoEmpleados()
-        -agregarEmpleados()
-        -modificarEmpleados()
-        -postularEmpleados()
-        -modificarEstadoEmpleados()
-    }
+    -listVacancies()
+    -addVacancies()
+    -closeVacancies()
+    -viewApplicants()
+}
 
-    class Contratado {
-        salario: float
-        fecha_contratado: date
-        fecha_inicio_contrato: date
-        ultimo_cliente: varchar
-        cliente_actual: varchar
-        horas_trabajo: int
-    }
+class Persons {
+    + person_id: int
+    + region: varchar
+    + division: varchar
+    + job_title: varchar
+    + job_grade: varchar
+    + tech_stack: varchar
+    - registration_date: date
+    - phone: varchar
+    - email: varchar
 
-    class Bench {
-        en_bench_desde: date
-        dias_en_bench: int
-        -moveToBilling()
-    }
+    -viewPersons()
+    -listPersons()
+    -viewPersonInfo()
+    -addPersons()
+    -modifyPersons()
+    -applyPersons()
+    -modifyPersonStatus()
+}
 
-    class Pipeline {
-        salario_esperado: float
-        en_pipeline_desde: date
-        dias_en_pipeline: int
-            -moveToBench()
-    }
+class Employees {
+    + employee_id: int
+    salary: float
+    hired_date: date
+    contract_start_date: date
+    last_client: varchar
+    current_client: varchar
+    work_hours: int
+}
 
-    class Billing {
-        facturando_desde: date
-        dias_facturando: int
+class Bench {
+    + bench_id: int
+    benched_since: date
+    days_on_bench: int
+    -moveToBilling()
+}
 
-        -moveToBench()
-    }
+class Pipeline {
+    + pipeline_id: int
+    expected_salary: float
+    in_pipeline_since: date
+    days_in_pipeline: int
+    -moveToBench()
+}
 
-    class Usuarios {
-        + id_usuario: int
-        - nombre_usuario: varchar
-        - password: varchar
-        - correo: varchar
-        - rol: varchar
+class Billing {
+    + billing_id: int
+    billing_since: date
+    days_billing: int
 
-        -visualizarUsuarios()
-        -listarUsuarios()
-        -modificarRolUsuarios()
-        -modificarUsuarios()
-        -agregarUsuarios
-        -eliminarUsuarios()
-    }
+    -moveToBench()
+}
 
-Clientes *-- Proyectos
-Proyectos *-- Posiciones
-Posiciones o-- Vacantes
-Vacantes o-- Empleados
+class Users {
+    + user_id: int
+    - username: varchar
+    - password: varchar
+    - email: varchar
+    - role: varchar
 
-Pipeline  --|>  Empleados
-Empleados <|-- Contratado
-Contratado <|-- Bench
-Contratado <|-- Billing
+    -viewUsers()
+    -listUsers()
+    -modifyUsersRole()
+    -modifyUsers()
+    -addUsers
+    -deleteUsers()
+}
+
+Clients *-- Projects
+Projects *-- Positions
+Positions o-- Vacancies
+Vacancies o-- Employees 
+
+Pipeline --|> Persons
+Persons <|-- Employees
+Employees <|-- Bench
+Employees <|-- Billing
+
 
  
