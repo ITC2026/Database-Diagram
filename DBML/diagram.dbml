@@ -59,10 +59,6 @@ Table Employees {
   employee_id int [pk]
   salary float
   hired_date date
-  contract_start_date date // apply relation
-  last_client varchar // apply relation
-  current_client varchar // apply relation
-  work_hours int // apply relation
   bench_id int
   billing_id int
 }
@@ -85,6 +81,16 @@ Table Billing {
   billing_id int [pk]
   billing_since date
   days_billing int
+}
+
+Table Client_Employee_Relation {
+    employee_id int 
+    contract_start_date date
+    last_client varchar
+    current_client varchar
+    work_hours int
+    client_id int 
+    client_name varchar
 }
 
 Table Users {
@@ -113,3 +119,5 @@ Ref: "Employees"."bench_id" - "Bench"."bench_id"
 Ref: "Employees"."billing_id" - "Billing"."billing_id"
 Ref: "Application"."person_id" - "Persons"."person_id"
 Ref: "Vacancies"."person_id" - "Persons"."person_id" 
+Ref: "Employees"."employee_id" - "Client_Employee_Relation"."employee_id"
+Ref: "Clients"."client_id" - "Client_Employee_Relation"."client_id"
