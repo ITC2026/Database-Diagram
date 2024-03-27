@@ -103,9 +103,10 @@ Table Users {
 
 //This Transaction Table is used to know which employees 
 Table Application {
+  application_id int [pk]
   status varchar
-  position_id int //COMPOUND
-  person_id int  //KEY
+  position_id int
+  person_id int  
 }
 
 
