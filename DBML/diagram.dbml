@@ -15,8 +15,8 @@ Table Projects {
   project_desc varchar
   publication_date date
   expiration_date date
-  general_status enum //refers to know if the project is either: 1-In Preparation, 2-Active, 3-Closed
-  account_manager int // FK
+  general_status enum //refers to if the project is either: 1-In Preparation, 2-Active, 3-Closed
+  account_manager_id int // FK
   client_id int // FK
 }
 
@@ -55,7 +55,7 @@ Table Positions {
 
 Table Vacancies {
   vacancy_id int [pk]
-  status varchar
+  vacancy_status enum //refers to if the vacancy is either: 1-Filled, 2-In Progress, 3-No Applicants
   reason varchar
   start_date date
   end_date date
@@ -65,7 +65,7 @@ Table Vacancies {
 
 Table Applications {
   application_id int [pk]
-  status varchar
+  application_status enum //refers to if the application is either: 1-Accepted, 2-Scheduled for interview, 3-Rejected by Client
   position_id int // FK
   person_id int // FK
 }
@@ -74,7 +74,7 @@ Table People {
   person_id int [pk]
   region varchar
   division varchar
-  general_status enum //refers to know if the person is either: 1-pipeline, 2-bench, 3-billing
+  general_status enum //refers to if the person is either: 1-pipeline, 2-bench, 3-billing
   job_title varchar
   job_grade varchar
   tech_stack varchar
@@ -96,7 +96,7 @@ Table Employees {
   employee_id int [pk]
   salary float
   hired_date date
-  reason varchar //refers to that the employee is fired or moved, or not yet on project "awaiting client confirmation"
+  reason varchar //refers to the reason the employee was fired or moved, or not yet on project "awaiting client confirmation"
   proposed_action varchar
   contract_start_date date 
   work_hours int 
@@ -149,4 +149,4 @@ Ref: "Employees"."employee_id" - "Bench"."employee_id"
 Ref: "Employees"."employee_id" - "Billing"."employee_id"
 
 // Only if is an account manager
-Ref: "Users"."user_id" > "Projects"."account_manager"
+Ref: "Users"."user_id" < "Projects"."account_manager_id"
