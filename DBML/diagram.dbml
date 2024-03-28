@@ -1,3 +1,16 @@
+Table Roles {
+  role_id int [pk]
+  role_name enum // Account, Resource, Staffer
+}
+
+Table Users {
+  user_id int [pk]
+  username varchar
+  password varchar
+  email varchar
+  role_id int // FK
+}
+
 Table Clients {
   client_id int [pk]
   client_name varchar
@@ -7,6 +20,8 @@ Table Clients {
   division varchar
   contract_pdf varchar
   logo varchar
+  created_by int // FK
+  updated_by int // FK
 }
 
 Table Projects {
@@ -16,8 +31,9 @@ Table Projects {
   publication_date date
   expiration_date date
   general_status enum //refers to if the project is either: 1-In Preparation, 2-Active, 3-Closed
-  account_manager_id int // FK
   client_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
 Table InPreparationProject {
@@ -51,6 +67,8 @@ Table Positions {
   demand_curation varchar
   exclusivity bool
   project_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
 Table Vacancies {
@@ -61,6 +79,8 @@ Table Vacancies {
   end_date date
   position_id int // FK
   person_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
 Table Applications {
@@ -68,6 +88,8 @@ Table Applications {
   application_status enum //refers to if the application is either: 1-Accepted, 2-Scheduled for interview, 3-Rejected by Client
   position_id int // FK
   person_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
 Table People {
@@ -81,6 +103,8 @@ Table People {
   registration_date date
   phone varchar
   email varchar
+  created_by int // FK
+  updated_by int // FK
 }
 
 Table Pipeline {
@@ -111,22 +135,14 @@ Table Bench {
   benched_since date
   days_on_bench int
   searching_job bool
-  employee_id int
+  employee_id int // FK
 }
 
 Table Billing {
   billing_id int [pk]
   billing_since date
   days_billing int
-  employee_id int
-}
-
-Table Users {
-  user_id int [pk]
-  username varchar
-  password varchar
-  email varchar
-  role varchar
+  employee_id int // FK
 }
 
 Ref: "Projects"."client_id" > "Clients"."client_id"
@@ -148,5 +164,22 @@ Ref: "People"."person_id" - "Employees"."person_id"
 Ref: "Employees"."employee_id" - "Bench"."employee_id"
 Ref: "Employees"."employee_id" - "Billing"."employee_id"
 
-// Only if is an account manager
-Ref: "Users"."user_id" < "Projects"."account_manager_id"
+Ref: "Users"."role_id" > "Roles"."role_id"
+
+// Account manager
+Ref: "Users"."user_id" < "Clients"."created_by"
+Ref: "Users"."user_id" < "Clients"."updated_by"
+Ref: "Users"."user_id" < "Projects"."created_by"
+Ref: "Users"."user_id" < "Projects"."updated_by"
+Ref: "Users"."user_id" < "Positions"."created_by"
+Ref: "Users"."user_id" < "Positions"."updated_by"
+Ref: "Users"."user_id" < "Vacancies"."created_by"
+Ref: "Users"."user_id" < "Vacancies"."updated_by"
+
+// Staffer 
+Ref: "Users"."user_id" < "Applications"."created_by"
+Ref: "Users"."user_id" < "Applications"."updated_by"
+
+// Resource
+Ref: "Users"."user_id" < "People"."created_by"
+Ref: "Users"."user_id" < "People"."updated_by"
