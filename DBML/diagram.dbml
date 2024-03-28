@@ -1,6 +1,19 @@
+// Tables
+
+/**
+ * Assumption: Each table includes 'created_at', 'updated_at', and 'deleted_at' columns.
+ * Future calculations in the backend should consider these assumptions.
+*/
+
 Table Roles {
   role_id int [pk]
-  role_name enum // Account, Resource, Staffer
+  role_name TypesOfRoles
+}
+
+Table RoleUserRelation {
+  role_user_id int [pk]
+  role_id int // FK
+  user_id int // FK
 }
 
 Table Users {
@@ -8,7 +21,6 @@ Table Users {
   username varchar
   password varchar
   email varchar
-  role_id int // FK
 }
 
 Table Clients {
@@ -24,13 +36,19 @@ Table Clients {
   updated_by int // FK
 }
 
+Table ClientEmployeeRelation {
+  client_employee_id int [pk]
+  client_id int // FK
+  employee_id int // FK
+}
+
 Table Projects {
   project_id int [pk]
   project_title varchar
   project_desc varchar
   publication_date date
   expiration_date date
-  general_status enum //refers to if the project is either: 1-In Preparation, 2-Active, 3-Closed
+  general_status ProjectStatus
   client_id int // FK
   created_by int // FK
   updated_by int // FK
@@ -50,8 +68,8 @@ Table ActiveProject {
 
 Table ClosedProject {
   closed_project_id int [pk]
-  reason varchar
-  closed_status bool
+  closed_status enum
+  closing_reason varchar
   project_id int // FK
 }
 
@@ -71,10 +89,10 @@ Table Positions {
   updated_by int // FK
 }
 
-Table Vacancies {
-  vacancy_id int [pk]
-  vacancy_status enum //refers to if the vacancy is either: 1-Filled, 2-In Progress, 3-No Applicants
-  reason varchar
+Table Opening {
+  opening_id int [pk]
+  opening_status OpeningStatus
+  opening_reason varchar
   start_date date
   end_date date
   position_id int // FK
@@ -85,7 +103,7 @@ Table Vacancies {
 
 Table Applications {
   application_id int [pk]
-  application_status enum //refers to if the application is either: 1-Accepted, 2-Scheduled for interview, 3-Rejected by Client
+  application_status ApplicationStatus
   position_id int // FK
   person_id int // FK
   created_by int // FK
@@ -94,25 +112,22 @@ Table Applications {
 
 Table People {
   person_id int [pk]
-  region varchar
-  division varchar
-  general_status enum //refers to if the person is either: 1-pipeline, 2-bench, 3-billing
-  job_title varchar
-  job_grade varchar
-  tech_stack varchar
-  registration_date date
   phone varchar
   email varchar
+  job_title varchar
+  tech_stack varchar
+  region varchar
+  division varchar
+  job_grade varchar
+  is_fired bool
+  people_status PeopleStatus
   created_by int // FK
   updated_by int // FK
 }
 
-Table Pipeline {
-  pipeline_id int [pk]
+Table Candidate {
+  candidate_id int [pk]
   expected_salary float
-  in_pipeline_since date
-  days_in_pipeline int
-  is_rejected bool
   person_id int // FK
 }
 
@@ -120,51 +135,97 @@ Table Employees {
   employee_id int [pk]
   salary float
   hired_date date
-  reason varchar //refers to the reason the employee was fired or moved, or not yet on project "awaiting client confirmation"
+  reason varchar
   proposed_action varchar
   contract_start_date date 
   work_hours int 
-  is_fired bool
-  last_client_id  int //last client or CLIENTSSS need revision
-  current_client_id int 
   person_id int // FK
+}
+
+Table Pipeline {
+  pipeline_id int [pk]
+  candidate_id int // FK
 }
 
 Table Bench {
   bench_id int [pk]
-  benched_since date
-  days_on_bench int
-  searching_job bool
   employee_id int // FK
+  candidate_id int // FK
 }
 
 Table Billing {
   billing_id int [pk]
-  billing_since date
-  days_billing int
   employee_id int // FK
 }
 
-Ref: "Projects"."client_id" > "Clients"."client_id"
-Ref: "Employees"."current_client_id" > "Clients"."client_id"
-Ref: "Employees"."last_client_id" > "Clients"."client_id"
+// Enums
 
-Ref: "Positions"."project_id" > "Projects"."project_id"
+Enum TypesOfRoles {
+  Admin
+  Account
+  Resource
+  Staffer
+}
+
+Enum ProjectStatus {
+  InPreparation
+  Active
+  Closed
+}
+
+Enum OpeningStatus {
+  Filled
+  InProgress
+  Empty
+}
+
+Enum ApplicationStatus {
+  Accepted
+  ScheduleForInterview
+  Rejected
+}
+
+Enum PeopleStatus {
+  Pipeline
+  Bench
+  Billing
+}
+
+
+// RoleUserRelation
+Ref: "Roles"."role_id" < "RoleUserRelation"."role_user_id"
+Ref: "Users"."user_id" < "RoleUserRelation"."role_user_id"
+
+// Client
+Ref: "Clients"."client_id" < "Projects"."client_id" 
+
+// ClientEmployeeRelation
+Ref: "Clients"."client_id" <  "ClientEmployeeRelation"."client_employee_id"
+Ref: "Employees"."employee_id" <  "ClientEmployeeRelation"."client_employee_id"
+
+// Projects
+Ref: "Projects"."project_id" < "Positions"."project_id" 
 Ref: "InPreparationProject"."project_id" - "Projects"."project_id"
 Ref: "ActiveProject"."project_id" - "Projects"."project_id"
 Ref: "ClosedProject"."project_id" - "Projects"."project_id"
 
+// Job Positions
 Ref: "Positions"."position_id" < "Applications"."position_id"
-Ref: "Positions"."position_id" < "Vacancies"."position_id"
+Ref: "Positions"."position_id" < "Opening"."position_id"
 Ref: "Applications"."person_id" - "People"."person_id"
-Ref: "Vacancies"."person_id" - "People"."person_id" 
+Ref: "Opening"."person_id" - "People"."person_id" 
 
-Ref: "People"."person_id" - "Pipeline"."person_id"
+// People
+Ref: "People"."person_id" - "Candidate"."person_id"
 Ref: "People"."person_id" - "Employees"."person_id"
+
+// Candidate
+Ref: "Candidate"."candidate_id" - "Bench"."candidate_id"
+Ref: "Candidate"."candidate_id" - "Pipeline"."candidate_id"
+
+// Employee
 Ref: "Employees"."employee_id" - "Bench"."employee_id"
 Ref: "Employees"."employee_id" - "Billing"."employee_id"
-
-Ref: "Users"."role_id" > "Roles"."role_id"
 
 // Account manager
 Ref: "Users"."user_id" < "Clients"."created_by"
@@ -173,8 +234,8 @@ Ref: "Users"."user_id" < "Projects"."created_by"
 Ref: "Users"."user_id" < "Projects"."updated_by"
 Ref: "Users"."user_id" < "Positions"."created_by"
 Ref: "Users"."user_id" < "Positions"."updated_by"
-Ref: "Users"."user_id" < "Vacancies"."created_by"
-Ref: "Users"."user_id" < "Vacancies"."updated_by"
+Ref: "Users"."user_id" < "Opening"."created_by"
+Ref: "Users"."user_id" < "Opening"."updated_by"
 
 // Staffer 
 Ref: "Users"."user_id" < "Applications"."created_by"
