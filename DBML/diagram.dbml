@@ -1,109 +1,244 @@
+// Tables
+
+/**
+ * Assumption: Each table includes 'created_at', 'updated_at', and 'deleted_at' columns.
+ * Future calculations in the backend should consider these assumptions.
+*/
+
+Table Roles {
+  role_id int [pk]
+  role_name TypesOfRoles
+}
+
+Table RoleUserRelation {
+  role_user_id int [pk]
+  role_id int // FK
+  user_id int // FK
+}
+
+Table Users {
+  user_id int [pk]
+  username varchar
+  password varchar
+  email varchar
+}
+
 Table Clients {
-    client_id int [pk]
-    contract_pdf varchar
-    logo varchar
-    client_name varchar
-    client_desc varchar
-    exclusivity varchar
-    high_growth bool
-    division varchar
+  client_id int [pk]
+  client_name varchar
+  client_desc varchar
+  exclusivity varchar
+  high_growth bool
+  division varchar
+  contract_pdf varchar
+  logo varchar
+  created_by int // FK
+  updated_by int // FK
+}
+
+Table ClientEmployeeRelation {
+  client_employee_id int [pk]
+  client_id int // FK
+  employee_id int // FK
 }
 
 Table Projects {
-    project_id int [pk]
-    project_title varchar
-    project_desc varchar
-    bill_rate float
-    publication_date date
-    expiration_date date
-    project_status int
-    client_id int
+  project_id int [pk]
+  project_title varchar
+  project_desc varchar
+  publication_date date
+  expiration_date date
+  general_status ProjectStatus
+  client_id int // FK
+  created_by int // FK
+  updated_by int // FK
+}
+
+Table InPreparationProject {
+  in_preparation_project_id int [pk]
+  project_id int // FK
+}
+
+Table ActiveProject {
+  active_project_id int [pk]
+  project_id int // FK
+}
+
+Table ClosedProject {
+  closed_project_id int [pk]
+  closed_status enum
+  closing_reason varchar
+  project_id int // FK
 }
 
 Table Positions {
-    position_id int [pk]
-    position_title varchar
-    position_desc varchar
-    //vacancies_count int No longer needed, can be calc from the code
-    publication_type varchar
-    cross_division bool
-    division varchar
-    region varchar
-    tech_stack varchar
-    demand_curation varchar
-    exclusivity bool
-    project_id int
+  position_id int [pk]
+  position_title varchar
+  position_desc varchar
+  publication_type varchar
+  cross_division bool
+  division varchar
+  region varchar
+  tech_stack varchar
+  demand_curation varchar
+  exclusivity bool
+  project_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
-Table Vacancies {
-    vacancy_id int [pk]
-    vacancy_status varchar
-    reason varchar //reason for vacancy status
-    employee_id int
-    position_id int
+Table Opening {
+  opening_id int [pk]
+  opening_status OpeningStatus
+  opening_reason varchar
+  start_date date
+  end_date date
+  position_id int // FK
+  person_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
-Table Persons { //could be changed Insider
-    person_id int [pk]
-    region varchar
-    division varchar
-    job_title varchar
-    job_grade varchar
-    tech_stack varchar
-    registration_date date
-    phone varchar
-    email varchar
-    pipeline_id int
-    employee_id int 
+Table Applications {
+  application_id int [pk]
+  application_status ApplicationStatus
+  position_id int // FK
+  person_id int // FK
+  created_by int // FK
+  updated_by int // FK
 }
 
-Table Employees { //previously hired
+Table People {
+  person_id int [pk]
+  phone varchar
+  email varchar
+  job_title varchar
+  tech_stack varchar
+  region varchar
+  division varchar
+  job_grade varchar
+  is_fired bool
+  people_status PeopleStatus
+  created_by int // FK
+  updated_by int // FK
+}
+
+Table Candidate {
+  candidate_id int [pk]
+  expected_salary float
+  person_id int // FK
+}
+
+Table Employees { 
   employee_id int [pk]
   salary float
   hired_date date
-  contract_start_date date
-  last_client varchar
-  current_client varchar
-  work_hours int
-  bench_id int
-  billing_id int
-}
-
-Table Bench {
-  bench_id int [pk]
-  benched_since date
-  days_on_bench int
+  reason varchar
+  proposed_action varchar
+  contract_start_date date 
+  work_hours int 
+  person_id int // FK
 }
 
 Table Pipeline {
   pipeline_id int [pk]
-  expected_salary float
-  in_pipeline_since date
-  days_in_pipeline int
-  person_id int 
+  candidate_id int // FK
+}
+
+Table Bench {
+  bench_id int [pk]
+  employee_id int // FK
+  candidate_id int // FK
 }
 
 Table Billing {
   billing_id int [pk]
-  billing_since date
-  days_billing int
+  employee_id int // FK
 }
 
-Table Users {
-    user_id int [pk]
-    username varchar
-    password varchar
-    email varchar
-    role varchar
+// Enums
+
+Enum TypesOfRoles {
+  Admin
+  Account
+  Resource
+  Staffer
 }
 
-Ref: "Projects"."client_id" > "Clients"."client_id"
-Ref: "Positions"."project_id" > "Projects"."project_id"
-Ref: "Vacancies"."position_id" > "Positions"."position_id"
-Ref: "Vacancies"."employee_id" - "Employees"."employee_id"
-Ref: "Persons"."person_id" - "Pipeline"."person_id"
-Ref: "Persons"."person_id" - "Employees"."employee_id"
-Ref: "Employees"."bench_id" - "Bench"."bench_id"
-Ref: "Employees"."billing_id" - "Billing"."billing_id"
+Enum ProjectStatus {
+  InPreparation
+  Active
+  Closed
+}
+
+Enum OpeningStatus {
+  Filled
+  InProgress
+  Empty
+}
+
+Enum ApplicationStatus {
+  Accepted
+  ScheduleForInterview
+  Rejected
+}
+
+Enum PeopleStatus {
+  Pipeline
+  Bench
+  Billing
+}
 
 
+// RoleUserRelation
+Ref: "Roles"."role_id" < "RoleUserRelation"."role_user_id"
+Ref: "Users"."user_id" < "RoleUserRelation"."role_user_id"
+
+// Client
+Ref: "Clients"."client_id" < "Projects"."client_id" 
+
+// ClientEmployeeRelation
+Ref: "Clients"."client_id" <  "ClientEmployeeRelation"."client_employee_id"
+Ref: "Employees"."employee_id" <  "ClientEmployeeRelation"."client_employee_id"
+
+// Projects
+Ref: "Projects"."project_id" < "Positions"."project_id" 
+Ref: "InPreparationProject"."project_id" - "Projects"."project_id"
+Ref: "ActiveProject"."project_id" - "Projects"."project_id"
+Ref: "ClosedProject"."project_id" - "Projects"."project_id"
+
+// Job Positions
+Ref: "Positions"."position_id" < "Applications"."position_id"
+Ref: "Positions"."position_id" < "Opening"."position_id"
+Ref: "Applications"."person_id" - "People"."person_id"
+Ref: "Opening"."person_id" - "People"."person_id" 
+
+// People
+Ref: "People"."person_id" - "Candidate"."person_id"
+Ref: "People"."person_id" - "Employees"."person_id"
+
+// Candidate
+Ref: "Candidate"."candidate_id" - "Bench"."candidate_id"
+Ref: "Candidate"."candidate_id" - "Pipeline"."candidate_id"
+
+// Employee
+Ref: "Employees"."employee_id" - "Bench"."employee_id"
+Ref: "Employees"."employee_id" - "Billing"."employee_id"
+
+// Account manager
+Ref: "Users"."user_id" < "Clients"."created_by"
+Ref: "Users"."user_id" < "Clients"."updated_by"
+Ref: "Users"."user_id" < "Projects"."created_by"
+Ref: "Users"."user_id" < "Projects"."updated_by"
+Ref: "Users"."user_id" < "Positions"."created_by"
+Ref: "Users"."user_id" < "Positions"."updated_by"
+Ref: "Users"."user_id" < "Opening"."created_by"
+Ref: "Users"."user_id" < "Opening"."updated_by"
+
+// Staffer 
+Ref: "Users"."user_id" < "Applications"."created_by"
+Ref: "Users"."user_id" < "Applications"."updated_by"
+
+// Resource
+Ref: "Users"."user_id" < "People"."created_by"
+Ref: "Users"."user_id" < "People"."updated_by"
