@@ -118,6 +118,7 @@ Table People {
   region varchar
   division varchar
   job_grade varchar
+  reason varchar
   is_fired bool
   people_status PeopleStatus
   created_by int // FK
@@ -134,7 +135,6 @@ Table Employees {
   employee_id int [pk]
   profile_picture varchar
   salary float
-  reason varchar
   hired_date date
   proposed_action varchar
   person_id int // FK
@@ -153,6 +153,7 @@ Table Bench {
 
 Table Billing {
   billing_id int [pk]
+  contract_start_date date
   employee_id int // FK
 }
 
