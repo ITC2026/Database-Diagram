@@ -119,7 +119,6 @@ Table People {
   division varchar
   job_grade varchar
   reason varchar
-  is_fired bool
   people_status PeopleStatus
   created_by int // FK
   updated_by int // FK
@@ -136,6 +135,7 @@ Table Employees {
   profile_picture varchar
   salary float
   hired_date date
+  is_fired bool
   proposed_action varchar
   person_id int // FK
 }
