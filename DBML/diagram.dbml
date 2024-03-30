@@ -27,7 +27,6 @@ Table Clients {
   client_id int [pk]
   client_name varchar
   client_desc varchar
-  exclusivity varchar
   high_growth bool
   division varchar
   contract_pdf varchar
@@ -47,28 +46,23 @@ Table Projects {
   project_title varchar
   project_desc varchar
   publication_date date
-  expiration_date date
+  start_date date
+  has_expirated_date bool
   general_status ProjectStatus
   client_id int // FK
   created_by int // FK
   updated_by int // FK
 }
 
-Table InPreparationProject {
-  in_preparation_project_id int [pk]
-  percentage_coverage int
-  project_id int // FK
-}
-
-Table ActiveProject {
-  active_project_id int [pk]
-  bill_rate int
+Table ExpirationDateProject {
+  expiration_date_id int [pk]
+  expiration_date date
   project_id int // FK
 }
 
 Table ClosedProject {
   closed_project_id int [pk]
-  closed_status enum
+  closed_status ClosedStatus
   closing_reason varchar
   project_id int // FK
 }
@@ -76,14 +70,13 @@ Table ClosedProject {
 Table Positions {
   position_id int [pk]
   position_title varchar
-  position_desc varchar
-  publication_type varchar
-  cross_division bool
   division varchar
   region varchar
   tech_stack varchar
-  demand_curation varchar
+  posting_type PostingType
+  cross_division bool
   exclusivity bool
+  working_hours int
   project_id int // FK
   created_by int // FK
   updated_by int // FK
@@ -92,13 +85,19 @@ Table Positions {
 Table Opening {
   opening_id int [pk]
   opening_status OpeningStatus
-  opening_reason varchar
-  start_date date
-  end_date date
+  opening_reason OpeningReason
+  publication_date date
+  has_expiration_date bool
   position_id int // FK
   person_id int // FK
   created_by int // FK
   updated_by int // FK
+}
+
+Table ExpirationDateOpening {
+  expiration_date_id int [pk]
+  expiration_date date
+  opening_id int // FK
 }
 
 Table Applications {
@@ -133,12 +132,11 @@ Table Candidate {
 
 Table Employees { 
   employee_id int [pk]
+  profile_picture varchar
   salary float
-  hired_date date
   reason varchar
+  hired_date date
   proposed_action varchar
-  contract_start_date date 
-  work_hours int 
   person_id int // FK
 }
 
@@ -173,10 +171,33 @@ Enum ProjectStatus {
   Closed
 }
 
+Enum ClosedStatus {
+  Completed
+  Cancelled
+}
+
+Enum PostingType {
+  NewHeadCount
+  BackFill_Replacement
+}
+
 Enum OpeningStatus {
+  New
   Filled
+  Closed
   InProgress
-  Empty
+  OnStandBy
+}
+
+Enum OpeningReason {
+  InProgress
+  OnStandby
+  Hired
+  Replacement
+  BudgetProblem
+  FilledByItself
+  FilledByAnother
+  NoReplied
 }
 
 Enum ApplicationStatus {
@@ -205,15 +226,15 @@ Ref: "Employees"."employee_id" <  "ClientEmployeeRelation"."client_employee_id"
 
 // Projects
 Ref: "Projects"."project_id" < "Positions"."project_id" 
-Ref: "InPreparationProject"."project_id" - "Projects"."project_id"
-Ref: "ActiveProject"."project_id" - "Projects"."project_id"
+Ref: "ExpirationDateProject"."project_id" - "Projects"."project_id"
 Ref: "ClosedProject"."project_id" - "Projects"."project_id"
 
 // Job Positions
 Ref: "Positions"."position_id" < "Applications"."position_id"
 Ref: "Positions"."position_id" < "Opening"."position_id"
 Ref: "Applications"."person_id" - "People"."person_id"
-Ref: "Opening"."person_id" - "People"."person_id" 
+Ref: "Opening"."person_id" - "People"."person_id"
+Ref: "ExpirationDateOpening"."opening_id" - "Opening"."opening_id"
 
 // People
 Ref: "People"."person_id" - "Candidate"."person_id"
