@@ -80,8 +80,8 @@ Table ClosedProject {
 Table Positions {
   position_id int [pk]
   position_title varchar
-  division varchar
-  region varchar
+  division Division
+  region Region
   tech_stack TechStack
   bill_rate float
   posting_type PostingType
@@ -122,9 +122,9 @@ Table People {
   phone varchar
   email varchar
   title varchar
-  tech_stack varchar
+  tech_stack TechStack
   division Division
-  region varchar
+  region Region
   people_status PeopleStatus
   current_status_reason varchar
 }
