@@ -126,7 +126,7 @@ Table People {
   division Division
   region Region
   people_status PeopleStatus
-  current_status_reason varchar
+  movement_reason varchar
 }
 
 Table Candidate {
