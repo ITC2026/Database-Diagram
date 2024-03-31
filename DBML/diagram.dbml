@@ -104,6 +104,12 @@ Table ExpirationDateOpening {
   opening_id int // FK
 }
 
+Table ExpirationDateOpening {
+  expiration_date_id int [pk]
+  expiration_date date
+  opening_id int // FK
+}
+
 Table Applications {
   application_id int [pk]
   application_status ApplicationStatus
