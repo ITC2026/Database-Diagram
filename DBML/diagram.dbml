@@ -89,7 +89,7 @@ Table Positions {
   exclusivity bool
   working_hours int
   project_id int // FK
-  //demand type is calculated
+  // Demand Type is calculated
 }
 
 Table Opening {
