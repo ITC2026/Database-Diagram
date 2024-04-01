@@ -1,7 +1,7 @@
 // Tables
 
 /**
- * Assumption: Each table includes 'created_at', 'updated_at', and 'deleted_at' columns.
+ * Assumption: Each table includes 'created_at' and 'updated_at'.
  * Future calculations in the backend should consider these assumptions.
 */
 
@@ -33,6 +33,8 @@ Table TicketLog {
 
 Table Entity {
   entity_id int [pk]
+  type Type 
+  isDeleted bool
   belongs_to_id int // FK
 }
 
@@ -41,7 +43,7 @@ Table Clients {
   client_name varchar
   client_desc varchar
   high_growth bool
-  division varchar
+  division Division
   contract_pdf varchar
   logo varchar
 }
@@ -78,14 +80,16 @@ Table ClosedProject {
 Table Positions {
   position_id int [pk]
   position_title varchar
-  division varchar
-  region varchar
-  tech_stack varchar
+  division Division
+  region Region
+  tech_stack TechStack
+  bill_rate float
   posting_type PostingType
   cross_division bool
   exclusivity bool
   working_hours int
   project_id int // FK
+  //demand type is calculated
 }
 
 Table Opening {
@@ -96,12 +100,6 @@ Table Opening {
   has_expiration_date bool
   position_id int // FK
   person_id int // FK
-}
-
-Table ExpirationDateOpening {
-  expiration_date_id int [pk]
-  expiration_date date
-  opening_id int // FK
 }
 
 Table ExpirationDateOpening {
@@ -123,46 +121,31 @@ Table People {
   gender Gender
   phone varchar
   email varchar
-  proposed_job_title varchar
-  tech_stack varchar
+  title varchar
+  tech_stack TechStack
   division Division
-  region varchar
+  region Region
   people_status PeopleStatus
-  current_status_reason varchar
-}
-
-Table Candidate {
-  candidate_id int [pk]
-  expected_salary float
-  person_id int // FK
+  movement_reason varchar
 }
 
 Table Employees { 
   employee_id int [pk]
-  current_job_title varchar
-  current_salary float
-  job_grade varchar
+  job varchar
+  salary float
+  job_grade JobGrade
   proposed_action ProposedAction
-  is_fired bool
+  employee_status EmployeeStatus
+  employe_reason EmployeeReason
+  contract_start_date date
+  last_movement_at date
   person_id int // FK
 }
 
 Table Pipeline {
   pipeline_id int [pk]
-  is_rejected bool
-  candidate_id int // FK
-}
-
-Table Bench {
-  bench_id int [pk]
-  employee_id int // FK
-  candidate_id int // FK
-}
-
-Table Billing {
-  billing_id int [pk]
-  contract_start_date date
-  employee_id int // FK
+  expected_salary float
+  person_id int // FK
 }
 
 // Enums
@@ -178,6 +161,16 @@ Enum Action {
   Create
   Update
   Delete
+}
+
+Enum Type {
+  Clients
+  Projects
+  Positions
+  Openings
+  Applications
+  People
+  Users
 }
 
 Enum ProjectStatus {
@@ -228,16 +221,99 @@ Enum Gender {
   NotWantedToSay
 }
 
-Enum Division {
-  Brazil
-  Mexico
-  CentralAndSouthAmerica
+Enum JobGrade {
+  C3
+  C4
+  C5
+  C6
 }
+
+Enum TechStack {
+  Java
+  React
+  Python
+  Automation
+  Golang
+  JavaScript
+  NET
+  Angular
+  Appian
+  PowerApps
+  ManualTester
+  Kotlin
+  UX
+  iOS
+}
+
+Enum ProposedAction {
+  ProjectSearch
+  UsingInInternalProject
+  UpSkillingCrossTraining 
+  BackupShadowOtherProjects 
+  ResourcePool
+  NoActionRequired
+  Others
+  Attrition
+}
+
+enum EmployeeReason {
+  InTraining
+  InductionOrientation
+  ShadowResource
+  AwaitingClientConfirmationJoining
+  MaternityLeave
+  SabbaticalOtherLeave
+  PreviousClientAttrition
+  PreviousClientHCReduction
+  TransitionBetweenProjects
+  NoAvailableProjects
+  InternalProject
+  MovedToBilling
+  PerformanceIssuesPIP
+  Other
+  Intern
+}
+
+
+Enum Division {
+  BRAZIL
+  MEXICO
+  CSA
+  US
+}
+
+enum Region {
+  // Mexico
+  CDMX 
+  CUU 
+  HMO 
+  MID 
+  SLP 
+  // Brazil
+  CAMPINA 
+  SAO_PAULO 
+  // Central and South American
+  COLOMBIA 
+  PERU 
+  COSTA_RICA 
+  ARGENTINA 
+  DOMINICANA 
+  // United States
+  DALLAS 
+  PHOENIX 
+}
+
 
 Enum PeopleStatus {
   Pipeline
   Bench
   Billing
+}
+
+Enum EmployeeStatus {
+  OnHired
+  LayOff
+  Resigned
 }
 
 // RoleUserRelation
@@ -258,6 +334,7 @@ Ref: "Positions"."position_id" - "Entity"."belongs_to_id"
 Ref: "Opening"."opening_id" - "Entity"."belongs_to_id"
 Ref: "Applications"."application_id" - "Entity"."belongs_to_id"
 Ref: "People"."person_id" - "Entity"."belongs_to_id"
+Ref: "Users"."user_id" - "Entity"."belongs_to_id"
 
 // ClientEmployeeRelation
 Ref: "Clients"."client_id" <  "ClientEmployeeRelation"."client_employee_id"
@@ -276,13 +353,5 @@ Ref: "Opening"."person_id" - "People"."person_id"
 Ref: "ExpirationDateOpening"."opening_id" - "Opening"."opening_id"
 
 // People
-Ref: "People"."person_id" - "Candidate"."person_id"
 Ref: "People"."person_id" - "Employees"."person_id"
-
-// Candidate
-Ref: "Candidate"."candidate_id" - "Bench"."candidate_id"
-Ref: "Candidate"."candidate_id" - "Pipeline"."candidate_id"
-
-// Employee
-Ref: "Employees"."employee_id" - "Bench"."employee_id"
-Ref: "Employees"."employee_id" - "Billing"."employee_id"
+Ref: "People"."person_id" - "Pipeline"."person_id"
