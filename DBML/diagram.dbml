@@ -117,6 +117,8 @@ Table Applications {
 
 Table People {
   person_id int [pk]
+  first_name varchar
+  last_name varchar
   profile_picture varchar
   gender Gender
   phone varchar
@@ -211,6 +213,7 @@ Enum OpeningReason {
 Enum ApplicationStatus {
   Accepted
   ScheduleForInterview
+  WaitingForFeedback
   Rejected
 }
 
