@@ -92,6 +92,12 @@ Table Positions {
   // Demand Type is calculated
 }
 
+Table Comments {
+  comment_id int [pk]
+  comment varchar
+  position_id int
+}
+
 Table Opening {
   opening_id int [pk]
   opening_status OpeningStatus
@@ -354,6 +360,7 @@ Ref: "Positions"."position_id" < "Opening"."position_id"
 Ref: "Applications"."person_id" - "People"."person_id"
 Ref: "Opening"."person_id" - "People"."person_id"
 Ref: "ExpirationDateOpening"."opening_id" - "Opening"."opening_id"
+Ref: "Comments"."position_id" - "Positions"."position_id"
 
 // People
 Ref: "People"."person_id" - "Employees"."person_id"
